@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CITRAQ DOWNLOADER</title>
+   <link rel="icon" href="https://qu.ax/XhmBP.jpeg" type="image/jpeg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --success: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --info: #0984e3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background-color: white;
+            color: var(--dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: #5a4bd1;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #8e7cfd;
+        }
+
+        .result-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .result-card h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .result-card p {
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--success);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background-color: #00a884;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+        }
+
+        .ai-chat {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .ai-chat-header {
+            padding: 15px 20px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .ai-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .user-message {
+            background-color: var(--primary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .ai-message {
+            background-color: white;
+            color: var(--dark);
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .ai-input-container {
+            display: flex;
+            padding: 15px;
+            background-color: white;
+            border-top: 1px solid #eee;
+        }
+
+        .ai-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .ai-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .error-message {
+            color: var(--danger);
+            margin-top: 10px;
+            font-weight: 500;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-download"></i>
+                <h1>CITRAQ DOWNLOADER</h1>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="youtube">YouTube Downloader</button>
+            <button class="tab-btn" data-tab="tiktok">TikTok Downloader</button>
+            <button class="tab-btn" data-tab="ai">AI Assistant</button>
+        </div>
+
+        <!-- YouTube Downloader Tab -->
+        <div class="tab-content active" id="youtube">
+            <div class="card">
+                <h2><i class="fab fa-youtube"></i> Download YouTube</h2>
+                
+                <div class="input-group">
+                    <input type="text" id="youtube-url" placeholder="Paste YouTube URL here...">
+                    <button class="btn" id="youtube-download-btn">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+                
+                <div id="youtube-error" class="error-message"></div>
+                
+                <div class="result-container" id="youtube-result">
+                    <div class="result-card">
+                        <h3 id="youtube-title"></h3>
+                        <p id="youtube-details"></p>
+                        <a id="youtube-download-link" class="download-btn" href="#" target="_blank">
+                            <i class="fas fa-download"></i> Download MP3
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TikTok Downloader Tab -->
+        <div class="tab-content" id="tiktok">
+            <div class="card">
+                <h2><i class="fab fa-tiktok"></i> Download TikTok</h2>
+                
+                <div class="input-group">
+                    <input type="text" id="tiktok-url" placeholder="Paste TikTok URL here...">
+                    <button class="btn" id="tiktok-download-btn">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+                
+                <div id="tiktok-error" class="error-message"></div>
+                
+                <div class="result-container" id="tiktok-result">
+                    <div class="result-card">
+                        <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                            <img id="tiktok-cover" src="" alt="TikTok Cover" style="width: 120px; height: 160px; border-radius: 8px; object-fit: cover;">
+                            <div>
+                                <h3 id="tiktok-title"></h3>
+                                <p id="tiktok-author"></p>
+                                <p id="tiktok-stats"></p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <a id="tiktok-download-link" class="download-btn" href="#" target="_blank">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                            <a id="tiktok-wm-download-link" class="download-btn" href="#" target="_blank" style="background-color: var(--info);">
+                                <i class="fas fa-download"></i> With Watermark
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Assistant Tab -->
+        <div class="tab-content" id="ai">
+            <div class="card">
+                <h2><i class="fas fa-robot"></i> CITRAQ AI Assistant</h2>
+                
+                <div class="ai-chat">
+                    <div class="ai-chat-header">
+                        <i class="fas fa-robot"></i> CITRAQ AI
+                    </div>
+                    <div class="ai-messages" id="ai-messages">
+                        <div class="message ai-message">
+                            Hai! Aku adalah asisten citraq yang dikembangkan oleh Danz. Aku di sini buat bantuin kamu dengan berbagai pertanyaan atau informasi yang kamu butuhin. Gimana kabarnya? 😊
+                        </div>
+                    </div>
+                    <div class="ai-input-container">
+                        <input type="text" class="ai-input" id="ai-input" placeholder="Type your message here...">
+                        <button class="btn btn-secondary" id="ai-send-btn" style="margin-left: 10px;">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 CITRAQ DOWNLOADER. All rights reserved.</p>
+            <p>Developed with by Danz</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                
+                // Update active tab button
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Update active tab content
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // YouTube Downloader
+        const youtubeDownloadBtn = document.getElementById('youtube-download-btn');
+        const youtubeUrlInput = document.getElementById('youtube-url');
+        const youtubeResult = document.getElementById('youtube-result');
+        const youtubeError = document.getElementById('youtube-error');
+        const youtubeTitle = document.getElementById('youtube-title');
+        const youtubeDetails = document.getElementById('youtube-details');
+        const youtubeDownloadLink = document.getElementById('youtube-download-link');
+
+        youtubeDownloadBtn.addEventListener('click', () => {
+            const url = youtubeUrlInput.value.trim();
+            
+            if (!url) {
+                youtubeError.textContent = 'Please enter a YouTube URL';
+                youtubeResult.style.display = 'none';
+                return;
+            }
+
+            if (!url.includes('youtube.com') && !url.includes('youtu.be')) {
+                youtubeError.textContent = 'Please enter a valid YouTube URL';
+                youtubeResult.style.display = 'none';
+                return;
+            }
+
+            youtubeError.textContent = '';
+            youtubeDownloadBtn.innerHTML = '<span class="loading"></span> Processing...';
+            youtubeDownloadBtn.disabled = true;
+
+            const apiUrl = `https://admindanzgtg.biz.id/download/ytmp3?url=${encodeURIComponent(url)}`;
+            
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        youtubeTitle.textContent = data.result.title;
+                        youtubeDetails.textContent = `Type: ${data.result.type} | Format: ${data.result.format} | Quality: ${data.result.quality} | Duration: ${data.result.duration}`;
+                        youtubeDownloadLink.href = data.result.download;
+                        youtubeResult.style.display = 'block';
+                    } else {
+                        youtubeError.textContent = 'Failed to process YouTube URL';
+                        youtubeResult.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    youtubeError.textContent = 'An error occurred. Please try again.';
+                    youtubeResult.style.display = 'none';
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    youtubeDownloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
+                    youtubeDownloadBtn.disabled = false;
+                });
+        });
+
+        // TikTok Downloader
+        const tiktokDownloadBtn = document.getElementById('tiktok-download-btn');
+        const tiktokUrlInput = document.getElementById('tiktok-url');
+        const tiktokResult = document.getElementById('tiktok-result');
+        const tiktokError = document.getElementById('tiktok-error');
+        const tiktokTitle = document.getElementById('tiktok-title');
+        const tiktokAuthor = document.getElementById('tiktok-author');
+        const tiktokStats = document.getElementById('tiktok-stats');
+        const tiktokCover = document.getElementById('tiktok-cover');
+        const tiktokDownloadLink = document.getElementById('tiktok-download-link');
+        const tiktokWmDownloadLink = document.getElementById('tiktok-wm-download-link');
+
+        tiktokDownloadBtn.addEventListener('click', () => {
+            const url = tiktokUrlInput.value.trim();
+            
+            if (!url) {
+                tiktokError.textContent = 'Please enter a TikTok URL';
+                tiktokResult.style.display = 'none';
+                return;
+            }
+
+            if (!url.includes('tiktok.com')) {
+                tiktokError.textContent = 'Please enter a valid TikTok URL';
+                tiktokResult.style.display = 'none';
+                return;
+            }
+
+            tiktokError.textContent = '';
+            tiktokDownloadBtn.innerHTML = '<span class="loading"></span> Processing...';
+            tiktokDownloadBtn.disabled = true;
+
+            const apiUrl = `https://admindanzgtg.biz.id/download/tiktok?url=${encodeURIComponent(url)}`;
+            
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.type === 'video') {
+                        tiktokTitle.textContent = data.id;
+                        tiktokAuthor.textContent = `By ${data.author.nickname} (@${data.author.unique_id})`;
+                        tiktokStats.textContent = `❤️ ${data.stats.digg_count} | ▶️ ${data.stats.play_count} | 💬 ${data.stats.comment_count} | ↗️ ${data.stats.share_count}`;
+                        tiktokCover.src = data.cover;
+                        tiktokDownloadLink.href = data.play;
+                        tiktokWmDownloadLink.href = data.wmplay;
+                        tiktokResult.style.display = 'block';
+                    } else {
+                        tiktokError.textContent = 'Failed to process TikTok URL';
+                        tiktokResult.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    tiktokError.textContent = 'An error occurred. Please try again.';
+                    tiktokResult.style.display = 'none';
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    tiktokDownloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
+                    tiktokDownloadBtn.disabled = false;
+                });
+        });
+
+        // AI Assistant
+        const aiMessages = document.getElementById('ai-messages');
+        const aiInput = document.getElementById('ai-input');
+        const aiSendBtn = document.getElementById('ai-send-btn');
+        const prompt = "kamu adalah asisten citraq yang dikembangkan oleh admin citraq yang bernama danz, kamu juga sangat ramah dan baik sopan, dan menggunakan bahasa gaul";
+
+        // Store conversation history
+        let conversationHistory = [
+            {
+                role: "assistant",
+                content: "Hai! Aku adalah asisten citraq yang dikembangkan oleh Danz. Aku di sini buat bantuin kamu dengan berbagai pertanyaan atau informasi yang kamu butuhin. Gimana kabarnya? 😊"
+            }
+        ];
+
+        function addMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}-message`;
+            messageDiv.textContent = content;
+            aiMessages.appendChild(messageDiv);
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+        }
+
+        function sendAiMessage() {
+            const message = aiInput.value.trim();
+            
+            if (!message) return;
+
+            // Add user message to UI and history
+            addMessage('user', message);
+            conversationHistory.push({ role: "user", content: message });
+            
+            aiInput.value = '';
+            aiSendBtn.innerHTML = '<span class="loading"></span>';
+            aiSendBtn.disabled = true;
+            aiInput.disabled = true;
+
+            // Prepare the API URL
+            const apiUrl = `https://admindanzgtg.biz.id/api/autoai?text=${encodeURIComponent(message)}&prompt=${encodeURIComponent(prompt)}`;
+            
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        // Add AI response to UI and history
+                        addMessage('ai', data.result);
+                        conversationHistory.push({ role: "assistant", content: data.result });
+                    } else {
+                        addMessage('ai', "Maaf, aku mengalami kesalahan. Coba lagi ya!");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addMessage('ai', "Ups! Ada masalah dengan koneksi. Coba lagi nanti ya!");
+                })
+                .finally(() => {
+                    aiSendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+                    aiSendBtn.disabled = false;
+                    aiInput.disabled = false;
+                    aiInput.focus();
+                });
+        }
+
+        aiSendBtn.addEventListener('click', sendAiMessage);
+        
+        aiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendAiMessage();
+            }
+        });
+
+        // Initialize with YouTube tab active
+        document.getElementById('youtube').classList.add('active');
+    </script>
+</body>
+</html>
