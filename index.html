@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CITRAQ DOWNLOADER</title>
-   <link rel="icon" href="https://qu.ax/XhmBP.jpeg" type="image/jpeg">
+    <link rel="icon" href="https://qu.ax/XhmBP.jpeg" type="image/jpeg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -128,6 +128,28 @@
             font-size: 1.5rem;
         }
 
+        .download-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .download-option-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #f1f1f1;
+            color: var(--dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-option-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
         .input-group {
             display: flex;
             gap: 10px;
@@ -220,6 +242,34 @@
             background-color: #00a884;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+        }
+
+        .quality-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .quality-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: white;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quality-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .quality-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         .ai-chat {
@@ -365,6 +415,10 @@
                 justify-content: center;
             }
 
+            .download-options {
+                flex-direction: column;
+            }
+
             .input-group {
                 flex-direction: column;
             }
@@ -394,7 +448,12 @@
         <!-- YouTube Downloader Tab -->
         <div class="tab-content active" id="youtube">
             <div class="card">
-                <h2><i class="fab fa-youtube"></i> Download YouTube</h2>
+                <h2><i class="fab fa-youtube"></i> YouTube Downloader</h2>
+                
+                <div class="download-options">
+                    <button class="download-option-btn active" id="yt-audio-option">Audio MP3</button>
+                    <button class="download-option-btn" id="yt-video-option">Video MP4</button>
+                </div>
                 
                 <div class="input-group">
                     <input type="text" id="youtube-url" placeholder="Paste YouTube URL here...">
@@ -409,8 +468,11 @@
                     <div class="result-card">
                         <h3 id="youtube-title"></h3>
                         <p id="youtube-details"></p>
+                        <div id="quality-options-container" class="quality-options" style="display: none;">
+                            <!-- Quality options will be added here dynamically -->
+                        </div>
                         <a id="youtube-download-link" class="download-btn" href="#" target="_blank">
-                            <i class="fas fa-download"></i> Download MP3
+                            <i class="fas fa-download"></i> Download
                         </a>
                     </div>
                 </div>
@@ -420,7 +482,7 @@
         <!-- TikTok Downloader Tab -->
         <div class="tab-content" id="tiktok">
             <div class="card">
-                <h2><i class="fab fa-tiktok"></i> Download TikTok</h2>
+                <h2><i class="fab fa-tiktok"></i> Download TikTok Video</h2>
                 
                 <div class="input-group">
                     <input type="text" id="tiktok-url" placeholder="Paste TikTok URL here...">
@@ -511,6 +573,25 @@
         const youtubeTitle = document.getElementById('youtube-title');
         const youtubeDetails = document.getElementById('youtube-details');
         const youtubeDownloadLink = document.getElementById('youtube-download-link');
+        const qualityOptionsContainer = document.getElementById('quality-options-container');
+        const ytAudioOption = document.getElementById('yt-audio-option');
+        const ytVideoOption = document.getElementById('yt-video-option');
+
+        let currentYoutubeType = 'audio'; // 'audio' or 'video'
+
+        ytAudioOption.addEventListener('click', () => {
+            ytAudioOption.classList.add('active');
+            ytVideoOption.classList.remove('active');
+            currentYoutubeType = 'audio';
+            qualityOptionsContainer.style.display = 'none';
+        });
+
+        ytVideoOption.addEventListener('click', () => {
+            ytVideoOption.classList.add('active');
+            ytAudioOption.classList.remove('active');
+            currentYoutubeType = 'video';
+            qualityOptionsContainer.style.display = 'none';
+        });
 
         youtubeDownloadBtn.addEventListener('click', () => {
             const url = youtubeUrlInput.value.trim();
@@ -531,15 +612,34 @@
             youtubeDownloadBtn.innerHTML = '<span class="loading"></span> Processing...';
             youtubeDownloadBtn.disabled = true;
 
-            const apiUrl = `https://admindanzgtg.biz.id/download/ytmp3?url=${encodeURIComponent(url)}`;
+            const apiUrl = currentYoutubeType === 'audio' 
+                ? `https://admindanzgtg.biz.id/download/ytmp3?url=${encodeURIComponent(url)}`
+                : `https://admindanzgtg.biz.id/download/ytmp4?url=${encodeURIComponent(url)}`;
             
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
                     if (data.status) {
                         youtubeTitle.textContent = data.result.title;
-                        youtubeDetails.textContent = `Type: ${data.result.type} | Format: ${data.result.format} | Quality: ${data.result.quality} | Duration: ${data.result.duration}`;
-                        youtubeDownloadLink.href = data.result.download;
+                        
+                        if (currentYoutubeType === 'audio') {
+                            youtubeDetails.textContent = `Type: ${data.result.type} | Format: ${data.result.format} | Quality: ${data.result.quality} | Duration: ${data.result.duration}`;
+                            youtubeDownloadLink.href = data.result.download;
+                            qualityOptionsContainer.style.display = 'none';
+                        } else {
+                            youtubeDetails.textContent = `Type: ${data.result.type} | Format: ${data.result.format} | Quality: ${data.result.quality}p | Duration: ${data.result.duration}`;
+                            youtubeDownloadLink.href = data.result.download;
+                            
+                            // For video, we might have multiple quality options in the future
+                            // Currently just showing the one quality we got
+                            qualityOptionsContainer.innerHTML = `
+                                <button class="quality-btn active" data-quality="${data.result.quality}" data-url="${data.result.download}">
+                                    ${data.result.quality}p
+                                </button>
+                            `;
+                            qualityOptionsContainer.style.display = 'flex';
+                        }
+                        
                         youtubeResult.style.display = 'block';
                     } else {
                         youtubeError.textContent = 'Failed to process YouTube URL';
@@ -555,6 +655,17 @@
                     youtubeDownloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
                     youtubeDownloadBtn.disabled = false;
                 });
+        });
+
+        // Handle quality selection
+        qualityOptionsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('quality-btn')) {
+                document.querySelectorAll('.quality-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                youtubeDownloadLink.href = e.target.dataset.url;
+            }
         });
 
         // TikTok Downloader
