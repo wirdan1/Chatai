@@ -613,8 +613,8 @@
             youtubeDownloadBtn.disabled = true;
 
             const apiUrl = currentYoutubeType === 'audio' 
-                ? `https://hookrest.my.id/download/ytmp3?url=${encodeURIComponent(url)}`
-                : `https:/hookrest.my.id/download/ytmp4?url=${encodeURIComponent(url)}`;
+                ? `https://api-loop.vercel.app/download/ytmp3?url=${encodeURIComponent(url)}`
+                : `https://api-loop.vercel.app/download/ytmp4?url=${encodeURIComponent(url)}`;
             
             fetch(apiUrl)
                 .then(response => response.json())
@@ -699,7 +699,7 @@
             tiktokDownloadBtn.innerHTML = '<span class="loading"></span> Processing...';
             tiktokDownloadBtn.disabled = true;
 
-            const apiUrl = `https://hookrest.my.id/download/tiktok?url=${encodeURIComponent(url)}`;
+            const apiUrl = `https://api-loop.vercel.app/download/tiktok?url=${encodeURIComponent(url)}`;
             
             fetch(apiUrl)
                 .then(response => response.json())
@@ -765,7 +765,7 @@
             aiInput.disabled = true;
 
             // Prepare the API URL
-            const apiUrl = `https://hookrest.my.id/api/autoai?text=${encodeURIComponent(message)}&prompt=${encodeURIComponent(prompt)}`;
+            const apiUrl = `https://api-loop.vercel.app/api/autoai?text=${encodeURIComponent(message)}&prompt=${encodeURIComponent(prompt)}`;
             
             fetch(apiUrl)
                 .then(response => response.json())
